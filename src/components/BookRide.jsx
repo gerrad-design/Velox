@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 export default function BookRide({ setRideData }) {
   const [pickup, setPickup] = useState("");
@@ -8,79 +9,94 @@ export default function BookRide({ setRideData }) {
   const navigate = useNavigate();
 
   const rideOptions = [
-    { type: "Economy", eta: "3 mins", price: 150 },
-    { type: "Standard", eta: "4 mins", price: 200 },
-    { type: "Premium", eta: "2 mins", price: 300 },
+    { type: "Economy", price: 300, eta: "5 mins" },
+    { type: "Standard", price: 500, eta: "3 mins" },
+    { type: "Premium", price: 800, eta: "2 mins" },
   ];
 
-  const handleBook = () => {
-    if (pickup && destination && selectedRide) {
-      setRideData({ pickup, destination, selectedRide });
-      navigate("/loader");
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!pickup || !destination || !selectedRide) {
+      alert("Please fill all fields and select a ride type.");
+      return;
     }
+    setRideData({ pickup, destination, selectedRide });
+    navigate("/loader");
   };
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-6">
-      <div className="w-full max-w-md space-y-6">
-        <h2 className="text-3xl font-bold text-center mb-2">🚗 Book Your Ride</h2>
-        <p className="text-center text-gray-400">Enter your route & pick a ride type</p>
+    <motion.div
+      className="min-h-screen bg-zinc-900 text-white flex items-center justify-center p-6"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <div className="w-full max-w-lg bg-zinc-800 p-8 rounded-3xl shadow-xl space-y-6">
+        <h1 className="text-4xl font-extrabold text-center text-white">
+          Book a Ride 🚖
+        </h1>
 
-        <div className="space-y-4">
-          <input
-            type="text"
-            placeholder="Pickup Location"
-            value={pickup}
-            onChange={(e) => setPickup(e.target.value)}
-            className="w-full px-4 py-3 rounded bg-gray-800 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-white"
-          />
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label className="text-sm text-gray-400">Pickup Location</label>
+            <input
+              type="text"
+              value={pickup}
+              onChange={(e) => setPickup(e.target.value)}
+              className="w-full mt-1 p-3 bg-zinc-700 text-white rounded-xl placeholder-gray-400 focus:outline-none"
+              placeholder="e.g. Nairobi CBD"
+            />
+          </div>
 
-          <input
-            type="text"
-            placeholder="Destination"
-            value={destination}
-            onChange={(e) => setDestination(e.target.value)}
-            className="w-full px-4 py-3 rounded bg-gray-800 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-white"
-          />
-        </div>
+          <div>
+            <label className="text-sm text-gray-400">Destination</label>
+            <input
+              type="text"
+              value={destination}
+              onChange={(e) => setDestination(e.target.value)}
+              className="w-full mt-1 p-3 bg-zinc-700 text-white rounded-xl placeholder-gray-400 focus:outline-none"
+              placeholder="e.g. Westlands"
+            />
+          </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {rideOptions.map((ride, idx) => (
-            <div
-              key={idx}
-              onClick={() => setSelectedRide(ride)}
-              className={`p-4 rounded-xl cursor-pointer border text-center transition duration-300 ${
-                selectedRide?.type === ride.type
-                  ? "bg-white text-black border-white shadow-md"
-                  : "bg-gray-900 border-gray-700 hover:bg-gray-800"
-              }`}
-            >
-              <p className="font-bold">{ride.type}</p>
-              <p className="text-sm text-gray-400">{ride.eta}</p>
-              <p className="text-sm text-gray-300">Ksh {ride.price}</p>
+          <div>
+            <label className="text-sm text-gray-400 mb-1 block">Select Ride Type</label>
+            <div className="grid grid-cols-3 gap-3">
+              {rideOptions.map((option) => (
+                <button
+                  type="button"
+                  key={option.type}
+                  onClick={() => setSelectedRide(option)}
+                  className={`rounded-xl py-3 text-sm font-semibold transition ${
+                    selectedRide?.type === option.type
+                      ? "bg-white text-zinc-900 shadow-lg"
+                      : "bg-zinc-700 text-white hover:bg-zinc-600"
+                  }`}
+                >
+                  {option.type}
+                </button>
+              ))}
             </div>
-          ))}
-        </div>
+          </div>
 
-        <button
-          onClick={handleBook}
-          disabled={!(pickup && destination && selectedRide)}
-          className={`w-full py-3 font-semibold rounded-lg transition duration-300 ${
-            pickup && destination && selectedRide
-              ? "bg-white text-black hover:bg-gray-200"
-              : "bg-gray-700 text-gray-400 cursor-not-allowed"
-          }`}
-        >
-          Confirm Ride
-        </button>
+          <div className="space-y-3">
+            <button
+              type="submit"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-bold text-lg shadow-md transition"
+            >
+              ✅ Confirm Ride
+            </button>
 
-        <Link
-          to="/"
-          className="block text-center w-full py-3 rounded-lg border border-white text-white hover:bg-white hover:text-black transition duration-300"
-        >
-          ← Back to Home
-        </Link>
+            <button
+              type="button"
+              onClick={() => navigate("/")}
+              className="w-full text-center text-sm text-gray-400 underline hover:text-white"
+            >
+              ⬅ Back to Home
+            </button>
+          </div>
+        </form>
       </div>
-    </div>
+    </motion.div>
   );
 }

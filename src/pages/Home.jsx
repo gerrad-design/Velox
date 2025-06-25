@@ -1,17 +1,31 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 export default function Home() {
+  const navigate = useNavigate();
+
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-black text-white">
-      <h1 className="text-3xl font-bold mb-4">Welcome to Velox</h1>
-      <p className="mb-6">Book your ride instantly</p>
-      <Link
-        to="/book"
-        className="bg-white text-black px-4 py-2 rounded hover:bg-gray-200 transition"
-      >
-        Book a Ride
-      </Link>
-    </div>
+    <motion.div
+      className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-6"
+      initial={{ x: -300, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      exit={{ x: 300, opacity: 0 }}
+      transition={{ duration: 0.4 }}
+    >
+      <div className="text-center space-y-6 max-w-sm">
+        <h1 className="text-4xl font-bold">Welcome to Velox</h1>
+        <p className="text-gray-400 text-sm">
+          Fast, reliable, and safe rides at your fingertips.
+        </p>
+
+        <button
+          onClick={() => navigate("/book")}
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition"
+        >
+          🚗 Book a Ride
+        </button>
+      </div>
+    </motion.div>
   );
 }
