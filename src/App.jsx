@@ -1,13 +1,18 @@
-import React from 'react';
-import { useState } from 'react'
-import './App.css'
+import { Routes, Route } from 'react-router-dom';
+import Navbar from '../components/Navbar';
+import HomePage from '../pages/HomePage';
+import FeedbackPage from '../pages/FeedbackPage';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <h1 className='font-bold text-lg'>Hello cousins</h1>
-  )
+    <>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/feedback" element={<FeedbackPage />} />
+      </Routes>
+    </>
+  );
 }
 
-export default App
+export default App;
