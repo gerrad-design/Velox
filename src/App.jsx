@@ -1,12 +1,15 @@
 import React from 'react';
 import { useState } from 'react'
 import './App.css'
+import Authentication from './components/Authentication';
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <h1 className='font-bold text-lg'>Hello cousins</h1>
+    <div>
+      <Authentication />
+    </div>
   )
 }
 
