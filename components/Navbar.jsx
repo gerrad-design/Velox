@@ -1,31 +1,36 @@
 import { Rocket } from "lucide-react";
-import { Link } from "react-router-dom"
+import { Link } from "react-router-dom";
+import { useState } from "react";
+import Authentication from "./Authentication";
 
 export default function Navbar() {
+  const [showAuth, setShowAuth] = useState(false);
+
   return (
-    <header className="flex justify-between items-center px-6 py-4 shadow-md">
-      <h1 className="text-4xl font-bold text-indigo-600 flex items-center gap-2">
-        <Rocket className="w-13 h-13" /> Velox
-      </h1>
-      <nav className="flex items-center gap-6"></nav>
-        <Link
-          to="/"
-          className="text-2xl text-indigo-600 font-semibold hover:underline"
-        >
-          Home
-        </Link>
+    <>
+      <header className="flex bg-black justify-between items-center px-4 py-2 shadow-md">
+        <h1 className="text-4xl font-bold text-white flex items-center">
+          <Rocket className="w-8 h-8" /> Velox
+        </h1>
+        <nav className="flex items-center gap-6">
+          <Link to="/" className="text-md text-white font-semibold hover:underline">
+            Home
+          </Link>
+          <Link to="/feedback" className="text-md text-white font-semibold hover:underline">
+            Feedback 
+          </Link>
+          <button
+            onClick={() => setShowAuth(true)}
+            className="text-sm text-white font-semibold hover:underline"
+          >
+            Sign In
+          </button>
+        </nav>
+      </header>
 
-      <nav className="flex items-center gap-6"></nav>
-      <Link
-      to="/feedback"
-      className=" text-2xl text-indigo-600 font-semibold hover:underline"
-      >
-        Feedback 
-      </Link>
-
-      <a href="#" className="text-2xl text-indigo-600 font-semibold hover:underline">
-        Sign In
-      </a>
-    </header>
+      {showAuth && (
+        <Authentication onClose={() => setShowAuth(false)} />
+      )}
+    </>
   );
 }
