@@ -1,28 +1,31 @@
-import { Car } from "lucide-react";
+import React,{ useState } from "react";
+import Authentication from "./Authentication";
 
 export default function HeroSection() {
+  const [ showAuth, setShowAuth ] = useState(false)
+
   return (
-    <section className="text-center py-20 px-4 bg-indigo-50">
-      <h2 className="text-4xl md:text-5xl font-extrabold text-gray-800 mb-4">
+    <section className="text-center py-20 px-4 bg-gray-200">
+      <h2 className="text-4xl md:text-5xl font-extrabold text-black mb-2">
         Fast, Reliable Rides<br />When You Need Them
       </h2>
-      <p className="max-w-xl mx-auto text-gray-600 text-lg mb-8">
+      <p className="max-w-xl mx-auto text-black text-lg mb-6">
         Velox connects you with local drivers for quick, affordable transportation.
         Simple, fast, and built for communities everywhere.
       </p>
       <div className="flex flex-col md:flex-row gap-4 justify-center">
-        <a
-          href="#"
-          className="bg-indigo-600 text-white px-6 py-3 rounded-full text-lg font-medium flex items-center justify-center gap-2 hover:bg-indigo-700"
-        >
-          <Car className="w-5 h-5" /> Get a Ride
-        </a>
-        <a
-          href="#"
-          className="border border-indigo-600 text-indigo-600 px-6 py-3 rounded-full text-lg font-medium hover:bg-indigo-100"
-        >
-          Drive with Velox
-        </a>
+        <button onClick={() => setShowAuth(true)} className="bg-black text-white px-4 py-2 rounded-md">
+          Get a Ride
+        </button>
+        {showAuth && <Authentication
+           onClose={() => setShowAuth(false)}
+        />}
+        <button onClick={() => setShowAuth(true)} className="bg-black text-white px-4 py-2 rounded-md">
+          Drive with us
+        </button>
+        {showAuth && <Authentication  
+          onClose={() => setShowAuth(false)}
+        />}
       </div>
     </section>
   );
