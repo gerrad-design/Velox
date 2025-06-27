@@ -4,7 +4,7 @@ export default function FeedbackForm({ onClose }) {
   const [role, setRole] = useState('passenger');
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 shadow-xl flex items-center justify-center bg-black/30 backdrop-blur-sm">
       <form className="space-y-4 bg-white dark:bg-black p-6 rounded-lg shadow-xl w-[400px] relative">
         <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2 flex justify-between items-center">
           Feedback Form
