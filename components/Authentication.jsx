@@ -82,14 +82,8 @@ function Authentication({ onClose, onLogin }) {
         </div>
 
         <form className="space-y-3" onSubmit={handleSubmit}>
-          <input type="text" placeholder="Full Name" className="text-gray-500 w-full px-4 py-2 border rounded-md"
-            value={formData.fullName} onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}/>
           <input type="email" placeholder="Email" className="text-gray-500 w-full px-4 py-2 border rounded-md"
             value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })}/>
-          {authMode === "signup" && (
-            <input type="tel" placeholder="Phone Number" className="text-gray-500 w-full px-4 py-2 border rounded-md"
-              value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })}/>
-          )}
           <input type="password" placeholder="Password" className="text-gray-500 w-full px-4 py-2 border rounded-md"
             value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })}/>
           <button type="submit" className="w-full bg-black text-white py-2 rounded-md">
