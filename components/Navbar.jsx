@@ -1,19 +1,36 @@
 import { Rocket } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 import Authentication from "./Authentication";
+import FeedbackForm from "./FeedbackForm";
 
-export default function Navbar() {
-  const [showAuth, setShowAuth] = useState(false);
+export default function Navbar({ userType, setUserType }) {
+  const [showAuth, setShowAuth] = useState(false); 
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const navigate = useNavigate();
-  const isAuthenticated = !!
-  localStorage.getItem("token");
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsAuthenticated(!!token);
+  }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/Authentication");
+  const handleFeedbackClick = () => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    alert("You must be signed in to give feedback.");
+    return;
+  }
+  setShowFeedback(true);
   };
+
+
+  useEffect(() => {
+      const token = localStorage.getItem("token");
+      const role = localStorage.getItem("userType");
+      if (token && role) {
+        setUserType(role);
+      }
+    }, []);
 
   return (
     <>
@@ -25,18 +42,12 @@ export default function Navbar() {
           <Link to="/" className="text-md text-white font-semibold hover:underline">
             Home
           </Link>
-          <Link to="/feedbackpage" className="text-md text-white font-semibold hover:underline">
-            Feedback 
-          </Link>
-          {isAuthenticated? (
-            <button onClick={handleLogout} className="text-sm text-white font-semibold hover:underline">
-              Sign Out
+          <>
+            <button onClick={handleFeedbackClick} className="text-white hover:underline font-semibold bg-black px-4 py-2 rounded-md">
+              Give Feedback
             </button>
-              ):(
-            <button onClick={() => setShowAuth(true)} className="text-sm text-white font-semibold hover:underline">
-            Sign In
-            </button>
-          )}
+              {showFeedback && <FeedbackForm onClose={() => setShowFeedback(false)} />}
+          </>
         </nav>
       </header>
 

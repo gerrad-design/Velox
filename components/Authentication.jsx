@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-function Authentication({ onClose }) {
+function Authentication({ onClose, onLogin }) {
   const [userType, setUserType] = useState("rider");
   const [authMode, setAuthMode] = useState("signin");
   const [formData, setFormData] = useState({
@@ -17,42 +17,43 @@ function Authentication({ onClose }) {
     e.preventDefault();
     const endpoint = authMode === "signin" ? "/login" : "/signup";
 
-      try {
-        const res = await fetch(`http://localhost:5000${endpoint}`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ ...formData, userType }),
-        });
+    try {
+      const res = await fetch(`http://localhost:5000${endpoint}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ...formData, userType }),
+      });
 
-        const data = await res.json();
+      const data = await res.json();
 
-        if (res.ok && data.access_token) {
-          localStorage.setItem("token", data.access_token);
-          alert("Signed in successfully!");
+      if (res.ok && data.access_token) {
+        localStorage.setItem("token", data.access_token);
+        localStorage.setItem("userType", data.userType);
+        alert("Signed in successfully!");
 
-          const userRole = data.userType;
+        if (onLogin) onLogin(data.userType); 
 
-          if (userRole === "rider") {
-            navigate("/Home");
-          } else if (userRole === "driver") {
-            navigate("/driver/dashboard");
-          } else {
-            navigate("/");
-          }
+        if (data.userType === "rider") {
+          navigate("/");
+        } else if (data.userType === "driver") {
+          navigate("/");
         } else {
-          alert(data.msg || "Authentication failed.");
+          navigate("/");
         }
-      } catch (error) {
-        console.error("Error:", error);
-        alert("An error occurred. Please try again.");
-      }
-    };
 
+      } else {
+        alert(data.msg || "Authentication failed.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("An error occurred. Please try again.");
+    }
+  };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center shadow-xl bg-gray-200 bg-opacity-50 z-50">
+    <div className="shadow-xl fixed inset-0 flex items-center justify-center z-50 bg-opacity-50 backdrop-blur-sm">
       <div className="bg-white w-[400px] rounded-xl shadow-xl p-6">
         <div className="flex justify-between items-start">
           <div>
