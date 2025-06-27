@@ -1,10 +1,19 @@
 import { Rocket } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Authentication from "./Authentication";
 
 export default function Navbar() {
   const [showAuth, setShowAuth] = useState(false);
+
+  const navigate = useNavigate();
+  const isAuthenticated = !!
+  localStorage.getItem("token");
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/Authentication");
+  };
 
   return (
     <>
@@ -16,15 +25,18 @@ export default function Navbar() {
           <Link to="/" className="text-md text-white font-semibold hover:underline">
             Home
           </Link>
-          <Link to="/feedback" className="text-md text-white font-semibold hover:underline">
+          <Link to="/feedbackpage" className="text-md text-white font-semibold hover:underline">
             Feedback 
           </Link>
-          <button
-            onClick={() => setShowAuth(true)}
-            className="text-sm text-white font-semibold hover:underline"
-          >
+          {isAuthenticated? (
+            <button onClick={handleLogout} className="text-sm text-white font-semibold hover:underline">
+              Sign Out
+            </button>
+              ):(
+            <button onClick={() => setShowAuth(true)} className="text-sm text-white font-semibold hover:underline">
             Sign In
-          </button>
+            </button>
+          )}
         </nav>
       </header>
 

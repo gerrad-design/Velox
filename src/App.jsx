@@ -9,7 +9,7 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/feedback" element={<FeedbackPage />} />
+        <Route path="/feedbackpage" element={<FeedbackPage />} />
       </Routes>
     </>
   );
