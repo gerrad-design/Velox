@@ -19,8 +19,10 @@ export default function HeroSection() {
     localStorage.removeItem("token");
     localStorage.removeItem("userType");
     setUserType(null);
+    alert("Logout successful!");
     navigate("/");
   };
+
 
   const handleRedirect = () => {
     if (userType === "rider") {
