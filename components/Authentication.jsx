@@ -73,10 +73,10 @@ function Authentication({ onClose, onLogin }) {
         </div>
 
         <div className="flex gap-2 mb-4 bg-gray-100 p-1 rounded-md">
-          <button className={`flex-1 py-2 rounded ${authMode === "signin" ? "bg-white text-black font-semibold" : "text-gray-500"}`} onClick={() => setAuthMode("signin")}>
+          <button to="/" className={`flex-1 py-2 rounded ${authMode === "signin" ? "bg-white text-black font-semibold" : "text-gray-500"}`} onClick={() => setAuthMode("signin")}>
             Sign In
           </button>
-          <button className={`flex-1 py-2 rounded ${authMode === "signup" ? "bg-white text-black font-semibold" : "text-gray-500"}`} onClick={() => setAuthMode("signup")}>
+          <button to="/" className={`flex-1 py-2 rounded ${authMode === "signup" ? "bg-white text-black font-semibold" : "text-gray-500"}`} onClick={() => setAuthMode("signup")}>
             Sign Up
           </button>
         </div>
