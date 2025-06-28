@@ -46,7 +46,7 @@ export default function HeroSection() {
         {userType && (
           <>
             <button onClick={handleRedirect} className="bg-black text-white px-4 py-2 rounded-md">
-              {userType === "rider" ? "Go to Rider Dashboard" : "Go to Driver Dashboard"}
+              {userType === "rider" ? "Get a Ride" : "Drive with us"}
             </button>
             <button onClick={handleLogout} className="border border-white bg-black text-white px-4 py-2 rounded-md">
               Log out
