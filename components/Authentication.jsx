@@ -31,7 +31,6 @@ function Authentication({ onClose, onLogin }) {
       if (res.ok && data.access_token) {
         localStorage.setItem("token", data.access_token);
         localStorage.setItem("userType", data.userType);
-        alert("Signed in successfully!");
 
         if (onLogin) onLogin(data.userType); 
 
