@@ -31,6 +31,7 @@ function Authentication({ onClose, onLogin }) {
       if (res.ok && data.access_token) {
         localStorage.setItem("token", data.access_token);
         localStorage.setItem("userType", data.userType);
+        alert("Sign in successful");
 
         if (onLogin) onLogin(data.userType); 
 
@@ -72,10 +73,12 @@ function Authentication({ onClose, onLogin }) {
         </div>
 
         <div className="flex gap-2 mb-4 bg-gray-100 p-1 rounded-md">
-          <button to="/" className={`flex-1 py-2 rounded ${authMode === "signin" ? "bg-white text-black font-semibold" : "text-gray-500"}`} onClick={() => setAuthMode("signin")}>
+          <button className={`flex-1 py-2 rounded ${ authMode === "signin" ? "bg-white text-black font-semibold" : "text-gray-500"}`}
+            onClick={() => setAuthMode("signin")}>
             Sign In
           </button>
-          <button to="/" className={`flex-1 py-2 rounded ${authMode === "signup" ? "bg-white text-black font-semibold" : "text-gray-500"}`} onClick={() => setAuthMode("signup")}>
+          <button className={`flex-1 py-2 rounded ${  authMode === "signup" ? "bg-white text-black font-semibold" : "text-gray-500"}`}
+            onClick={() => setAuthMode("signup")}>
             Sign Up
           </button>
         </div>
