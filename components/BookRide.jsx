@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Loader2 } from "lucide-react";
-import socket from "../socket";
+import socket from "../src/socket";
 
 // Error boundary for safety
 class ErrorBoundary extends React.Component {

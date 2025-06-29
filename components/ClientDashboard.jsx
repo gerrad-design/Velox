@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import socket from "../socket"; // ✅ Use shared socket connection
+import socket from "../src/socket";
 import FakeCallModal from "./FakeCallModal";
 import FakeMessageModal from "./FakeMessageModal";
 

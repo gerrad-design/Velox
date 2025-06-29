@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Clock, CheckCircle2, XCircle, Car, RotateCw } from 'lucide-react';
-import socket from '../socket';
+import socket from '../src/socket';
 
 const RideStatus = ({ rideData }) => {
   const navigate = useNavigate();

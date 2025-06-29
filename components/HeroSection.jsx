@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Authentication from "./Authentication";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,Link } from "react-router-dom";
 
 export default function HeroSection() {
   const [showAuth, setShowAuth] = useState(false);
@@ -72,3 +72,5 @@ export default function HeroSection() {
     </section>
   );
 }
+
+
