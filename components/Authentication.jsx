@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../src/AuthContext";
 
 function Authentication({ onClose, onLogin }) {
   const [userType, setUserType] = useState("rider");
@@ -10,6 +11,7 @@ function Authentication({ onClose, onLogin }) {
     password: "",
     phone: "",
   });
+  const { login } = useAuth();
 
   const navigate = useNavigate();
 
@@ -30,6 +32,7 @@ function Authentication({ onClose, onLogin }) {
 
       if (res.ok && data.access_token) {
         localStorage.setItem("token", data.access_token);
+        login(data.user, data.access_token, data.userType);
         localStorage.setItem("userType", data.userType);
         alert("Sign in successful");
 
