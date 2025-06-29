@@ -26,7 +26,7 @@ export default function HeroSection() {
 
   const handleRedirect = () => {
     if (userType === "rider") {
-      navigate("./RidersPage");
+      navigate("/home/eugene/Velox/pages/RidersPage.jsx");
     } else if (userType === "driver") {
       navigate("/driver/dashboard");
     }
