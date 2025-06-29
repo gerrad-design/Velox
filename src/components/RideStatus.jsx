@@ -1,118 +1,228 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ArrowLeft, Clock, CheckCircle2, XCircle, Car, RotateCw } from 'lucide-react';
+import socket from '../socket';
 
-export default function RideStatus({ ride }) {
+const RideStatus = ({ rideData }) => {
   const navigate = useNavigate();
+  const [status, setStatus] = useState({
+    state: 'pending', // 'pending' | 'accepted' | 'declined'
+    driver: null,
+    timer: 60,
+    error: null
+  });
+
+  useEffect(() => {
+    if (!rideData?.ride_id) {
+      navigate('/book');
+      return;
+    }
+
+    console.log('Tracking ride:', rideData.ride_id);
+
+    const handleAccepted = (data) => {
+      if (data.ride_id === rideData.ride_id) {
+        setStatus({
+          state: 'accepted',
+          driver: {
+            name: data.driver_name,
+            car: data.car_plate,
+            message: data.message || 'Your driver is coming!'
+          },
+          timer: 0,
+          error: null
+        });
+      }
+    };
+
+    const handleDeclined = (data) => {
+      if (data.ride_id === rideData.ride_id) {
+        setStatus({
+          state: 'declined',
+          driver: null,
+          timer: 0,
+          error: data.message || 'No drivers available'
+        });
+      }
+    };
+
+    const handleTripEnded = (data) => {
+      if (data.ride_id === rideData.ride_id) {
+        setStatus({
+          state: 'declined',
+          driver: null,
+          timer: 0,
+          error: 'Trip ended by driver'
+        });
+      }
+    };
+
+    const handleCancelledByDriver = (data) => {
+      if (data.ride_id === rideData.ride_id) {
+        setStatus({
+          state: 'declined',
+          driver: null,
+          timer: 0,
+          error: 'Driver cancelled the ride'
+        });
+      }
+    };
+
+    socket.on('ride_accepted', handleAccepted);
+    socket.on('ride_declined', handleDeclined);
+    socket.on('trip_ended', handleTripEnded);
+    socket.on('ride_cancelled_by_driver', handleCancelledByDriver);
+
+    const timer = setInterval(() => {
+      setStatus(prev => {
+        if (prev.timer <= 1) {
+          clearInterval(timer);
+          if (prev.state === 'pending') {
+            return { ...prev, state: 'declined', error: 'Request timed out' };
+          }
+          return prev;
+        }
+        return { ...prev, timer: prev.timer - 1 };
+      });
+    }, 1000);
+
+    return () => {
+      socket.off('ride_accepted', handleAccepted);
+      socket.off('ride_declined', handleDeclined);
+      socket.off('trip_ended', handleTripEnded);
+      socket.off('ride_cancelled_by_driver', handleCancelledByDriver);
+      clearInterval(timer);
+    };
+  }, [rideData?.ride_id, navigate]);
+
+  const handleRetry = () => navigate('/book');
 
   const handleCancel = () => {
-    alert("❌ Your ride has been cancelled successfully.");
-    navigate("/");
+    if (rideData?.ride_id) {
+      socket.emit('client_cancel_ride', { ride_id: rideData.ride_id });
+    }
+    navigate('/');
   };
 
-  const handleTrack = () => {
-    navigate("/track");
-  };
-
-  if (!ride) {
+  if (!rideData) {
     return (
-      <div className="h-screen bg-zinc-900 text-white flex items-center justify-center">
-        <p>
-          No ride found. Go back to{" "}
-          <a href="/" className="underline text-blue-500">Home</a>
-        </p>
+      <div className="flex items-center justify-center h-screen bg-gray-100">
+        <p>No ride information found</p>
       </div>
     );
   }
 
-  const { pickup, destination, selectedRide } = ride;
-
   return (
-    <motion.div
-      className="min-h-screen bg-zinc-900 text-white p-6"
-      initial={{ opacity: 0, y: 50 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -50 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-    >
-      <div className="max-w-2xl mx-auto space-y-8">
+    <div className="min-h-screen bg-gray-100 p-4">
+      <div className="max-w-md mx-auto">
         {/* Header */}
-        <div className="text-center">
-          <h1 className="text-4xl font-extrabold text-white">🚘 Your Driver is On the Way</h1>
-          <p className="text-gray-400 mt-1">Sit back and relax, we’re coming to you.</p>
+        <div className="flex items-center justify-between mb-8">
+          <button onClick={handleCancel} className="flex items-center gap-1 text-blue-600">
+            <ArrowLeft size={18} />
+            <span>Back</span>
+          </button>
+          <h1 className="text-xl font-bold">Ride Status</h1>
+          <div className="w-6" />
         </div>
 
-        {/* Ride Summary */}
-        <motion.div 
-          className="bg-zinc-800 p-6 rounded-3xl shadow-xl space-y-4"
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 0.2 }}
-        >
-          <div className="flex justify-between text-sm">
-            <span className="text-gray-400">Pickup:</span>
-            <span className="font-medium text-white">{pickup}</span>
+        {/* Status */}
+        <div className="bg-white rounded-lg shadow-md p-6 mb-6 text-center">
+          {status.state === 'pending' && (
+            <>
+              <Clock className="w-12 h-12 text-blue-500 mx-auto mb-4 animate-pulse" />
+              <h2 className="text-xl font-bold mb-2">Looking for a driver</h2>
+              <p className="text-gray-600 mb-4">{status.timer} seconds remaining</p>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div
+                  className="bg-blue-500 h-2 rounded-full"
+                  style={{ width: (status.timer / 60) * 100 + '%' }}
+                />
+              </div>
+            </>
+          )}
+
+          {status.state === 'accepted' && status.driver && (
+            <>
+              <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto mb-4" />
+              <h2 className="text-xl font-bold mb-2">Driver accepted!</h2>
+              <p className="text-gray-600 mb-6">{status.driver.message}</p>
+            </>
+          )}
+
+          {status.state === 'declined' && (
+            <>
+              <XCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+              <h2 className="text-xl font-bold mb-2">Ride not available</h2>
+              <p className="text-gray-600 mb-6">{status.error}</p>
+            </>
+          )}
+        </div>
+
+        {/* Ride Info */}
+        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+          <h3 className="font-bold mb-4 text-lg">Trip Details</h3>
+          <div className="space-y-3">
+            <div className="flex justify-between">
+              <span className="text-gray-500">From:</span>
+              <span>{rideData.pickup}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-500">To:</span>
+              <span>{rideData.destination}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-500">Type:</span>
+              <span>{rideData.selectedRide.type}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-500">Fare:</span>
+              <span>Ksh {rideData.selectedRide.price}</span>
+            </div>
           </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-gray-400">Destination:</span>
-            <span className="font-medium text-white">{destination}</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-gray-400">Fare:</span>
-            <span className="text-green-400 font-bold">Ksh {selectedRide.price}</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-gray-400">Ride Type:</span>
-            <span className={`px-3 py-1 rounded-full text-white text-xs ${
-              selectedRide.type === "Economy"
-                ? "bg-blue-600"
-                : selectedRide.type === "Standard"
-                ? "bg-purple-600"
-                : "bg-pink-600"
-            }`}>
-              {selectedRide.type}
-            </span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-gray-400">ETA:</span>
-            <span className="italic text-white">{selectedRide.eta}</span>
-          </div>
-        </motion.div>
+        </div>
 
         {/* Driver Info */}
-        <motion.div 
-          className="bg-zinc-800 p-6 rounded-3xl shadow-xl space-y-2"
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.4 }}
-        >
-          <h2 className="text-lg font-semibold text-white mb-2">🧑‍✈️ Driver Info</h2>
-          <p className="text-sm">Name: <span className="font-medium">Leshan</span></p>
-          <p className="text-sm">Car: <span className="font-medium">Toyota Vitz</span></p>
-          <p className="text-sm">Plate: <span className="font-medium">KDJ 455U</span></p>
-        </motion.div>
+        {status.state === 'accepted' && status.driver && (
+          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h3 className="font-bold mb-4 text-lg flex items-center gap-2">
+              <Car size={18} className="text-blue-500" />
+              <span>Driver Information</span>
+            </h3>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-gray-500">Name:</span>
+                <span>{status.driver.name}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Vehicle:</span>
+                <span>{status.driver.car}</span>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Buttons */}
-        <motion.div
-          className="flex flex-col sm:flex-row gap-4"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-        >
-          <button
-            onClick={handleTrack}
-            className="bg-blue-600 hover:bg-blue-700 transition px-4 py-3 rounded-xl w-full text-sm font-semibold"
-          >
-            📍 Tracker
-          </button>
+        <div className="flex flex-col gap-3">
+          {status.state === 'declined' && (
+            <button
+              onClick={handleRetry}
+              className="bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-medium flex items-center justify-center gap-2"
+            >
+              <RotateCw size={18} />
+              Try Again
+            </button>
+          )}
+
           <button
             onClick={handleCancel}
-            className="bg-red-600 hover:bg-red-700 transition px-4 py-3 rounded-xl w-full text-sm font-semibold"
+            className="border border-gray-300 hover:bg-gray-50 py-3 rounded-lg font-medium"
           >
-            ❌ Cancel Ride
+            {status.state === 'pending' ? 'Cancel Request' : 'Back Home'}
           </button>
-        </motion.div>
+        </div>
       </div>
-    </motion.div>
+    </div>
   );
-}
+};
+
+export default RideStatus;
