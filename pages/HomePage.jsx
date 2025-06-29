@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import Navbar from '../components/Navbar';
 import HeroSection from '../components/HeroSection';
 import FeatureSection from '../components/FeatureSection';
 import StatsSection from '../components/StatsSection';
@@ -11,7 +10,6 @@ export default function HomePage() {
   return (
     <div className="bg-white text-black dark:bg-gray-200">
       <HeroSection onStartAuth={() => setShowAuth(true)} />
-      <Navbar />
       <FeatureSection />
       <StatsSection />
       {showAuth && <Authentication onClose={() => setShowAuth(false)} />}
