@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Authentication from "./Authentication";
-import { useNavigate,Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function HeroSection() {
   const [showAuth, setShowAuth] = useState(false);
@@ -19,14 +19,14 @@ export default function HeroSection() {
     localStorage.removeItem("token");
     localStorage.removeItem("userType");
     setUserType(null);
+    setShowAuth(false);
     alert("Logout successful!");
     navigate("/");
   };
 
-
   const handleRedirect = () => {
     if (userType === "rider") {
-      navigate("/home/eugene/Velox/pages/RidersPage.jsx");
+      navigate("/rider/dashboard");
     } else if (userType === "driver") {
       navigate("/driver/dashboard");
     }
@@ -43,7 +43,7 @@ export default function HeroSection() {
       </p>
 
       <div className="flex flex-col md:flex-row gap-4 justify-center">
-        {userType && (
+        {userType ? (
           <>
             <button onClick={handleRedirect} className="bg-black text-white px-4 py-2 rounded-md">
               {userType === "rider" ? "Get a Ride" : "Drive with us"}
@@ -52,25 +52,22 @@ export default function HeroSection() {
               Log out
             </button>
           </>
-        )}
-
-        {!userType && (
-          <>
-            <button onClick={() => setShowAuth(true)} className="bg-black text-white px-4 py-2 rounded-md">
-              Get a Ride
+        ) : (
+          ["Get a Ride", "Drive with us"].map((label, idx) => (
+            <button
+              key={idx}
+              onClick={() => setShowAuth(true)}
+              className="bg-black text-white px-4 py-2 rounded-md"
+            >
+              {label}
             </button>
-            <button onClick={() => setShowAuth(true)} className="bg-black text-white px-4 py-2 rounded-md">
-              Drive with us
-            </button>
-          </>
+          ))
         )}
 
         {showAuth && (
-          <Authentication onClose={() => setShowAuth(false)} onLogin={(role) => setUserType(role)}/>
+          <Authentication onClose={() => setShowAuth(false)} onLogin={(role) => setUserType(role)} />
         )}
       </div>
     </section>
   );
 }
-
-

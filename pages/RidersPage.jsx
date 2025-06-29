@@ -9,7 +9,6 @@ export default function RidersPage() {
 
   return (
     <div className="bg-white text-black dark:bg-gray-200">
-        <h2>Hello World</h2>
         <Navbar/>
         <BookRide/>
         <ClientDashboard/>
