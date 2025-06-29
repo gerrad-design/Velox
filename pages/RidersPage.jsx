@@ -1,6 +1,5 @@
 import { useState } from "react";
 import BookRide from "../components/BookRide";
-import ClientDashboard from "../components/ClientDashboard";
 import RideStatus from "../components/RideStatus";
 import Navbar from "../components/Navbar";
 
