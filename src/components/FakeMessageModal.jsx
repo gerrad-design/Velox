@@ -1,35 +1,94 @@
-import { motion } from "framer-motion";
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
-export default function FakeMessageModal({ show, onClose, messageData }) {
-  if (!show) return null;
+export default function FakeMessageModal({
+  open = false,
+  show = false,
+  onClose,
+  messageData,
+  clientName,
+}) {
+  const [message, setMessage] = useState("");
+  const [sent, setSent] = useState(false);
+  const isVisible = open || show;
+
+  const isReceiving = !!messageData;
+
+  const handleSend = () => {
+    if (message.trim()) {
+      setSent(true);
+      setTimeout(() => {
+        setSent(false);
+        setMessage("");
+        onClose();
+      }, 1500);
+    }
+  };
+
+  useEffect(() => {
+    if (!isVisible) {
+      setMessage("");
+      setSent(false);
+    }
+  }, [isVisible]);
 
   return (
-    <motion.div
-      className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-    >
-      <motion.div
-        className="bg-zinc-900 text-white p-6 rounded-2xl text-center space-y-4 shadow-2xl w-[90%] max-w-md"
-        initial={{ scale: 0.8, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 0.3 }}
-      >
-        <h2 className="text-2xl font-bold">💬 New Message</h2>
-        <p className="text-lg font-medium text-blue-400">
-          From: {messageData?.from || "Unknown Driver"}
-        </p>
-        <p className="text-sm text-gray-300 italic">
-          "{messageData?.message || 'No message content'}"
-        </p>
-
-        <button
-          onClick={onClose}
-          className="mt-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 transition rounded-xl text-white font-semibold"
+    <AnimatePresence>
+      {isVisible && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.95 }}
+          transition={{ duration: 0.3 }}
+          className="fixed inset-0 bg-black/80 flex items-center justify-center z-50"
         >
-          Dismiss
-        </button>
-      </motion.div>
-    </motion.div>
+          <div className="bg-gray-900 text-white rounded-xl p-6 w-full max-w-md text-center shadow-2xl">
+            <h2 className="text-2xl font-bold mb-2">
+              💬 {isReceiving ? "New Message" : `Message ${clientName}`}
+            </h2>
+
+            {isReceiving ? (
+              <>
+                <p className="text-blue-400 text-lg font-medium">
+                  From: {messageData?.from || "Unknown Driver"}
+                </p>
+                <p className="italic text-gray-300 mt-2">
+                  “{messageData?.message || "No message content"}”
+                </p>
+                <button
+                  onClick={onClose}
+                  className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-xl font-semibold"
+                >
+                  Dismiss
+                </button>
+              </>
+            ) : (
+              <>
+                <textarea
+                  className="w-full h-24 p-2 bg-black/40 border border-white/10 rounded mb-4 text-white resize-none"
+                  placeholder="Type your message here..."
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                />
+                <div className="flex justify-end gap-2">
+                  <button
+                    onClick={onClose}
+                    className="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSend}
+                    className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded"
+                  >
+                    {sent ? "Sending..." : "Send"}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
