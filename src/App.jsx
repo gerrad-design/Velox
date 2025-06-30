@@ -3,7 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import HomePage from '../pages/HomePage';
 import FeedbackPage from '../pages/FeedbackPage';
-import Dashboard from './components/Dashboard'; // Update the path if needed
+import DashBoardPage from '../pages/DashBoardPage';
 
 export default function App() {
   const [userType, setUserType] = useState(null);
@@ -14,7 +14,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<HomePage userType={userType} setUserType={setUserType} />} />
         <Route path="/feedbackpage" element={<FeedbackPage />} />
-        <Route path="/dashboard" element={<Dashboard />} /> {/* Optional route */}
+        <Route path="/dashboardpage" element={<DashBoardPage />} />
       </Routes>
     </div>
   );

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { io } from "socket.io-client";
 import StatCard from "./StatCard";
 import RideDetailsCard from "./RideDetailsCard";
@@ -9,8 +10,8 @@ import PastTripDetails from "./PastTripDetails";
 import DeclineReasonForm from "./DeclineReasonForm";
 import EarningsChart from "./EarningsChart";
 
-const BASE_URL = "http://localhost:5000"; // Replace with your ngrok link if needed
-const socket = io(BASE_URL, { transports: ["websocket", "polling"] });
+  const BASE_URL = "http://localhost:5000";
+  const socket = io(BASE_URL, { transports: ["websocket", "polling"] });
 
 export default function Dashboard() {
   const [isOnline, setIsOnline] = useState(false);
@@ -43,12 +44,12 @@ export default function Dashboard() {
       .then((data) => {
         setTripHistory(data);
       })
-      .catch((err) => console.error("❌ Failed to fetch history:", err));
+      .catch((err) => console.error(" Failed to fetch history:", err));
   };
 
   useEffect(() => {
     setDriverData({
-      name: "Leshan",
+      name: "There",
       avatar: "/driver.jpg",
       car: { model: "Toyota Vitz", plate: "KDJ 123X" },
       stats: { avgRating: 4.8, hoursOnline: "4h 15m" },
@@ -98,7 +99,7 @@ export default function Dashboard() {
         ride_id: rideRequest?.ride_id,
         accepted: true,
       }),
-    }).catch((err) => console.error("❌ Accept failed:", err));
+    }).catch((err) => console.error(" Accept failed:", err));
   };
 
   const handleDecline = () => {
@@ -118,7 +119,7 @@ export default function Dashboard() {
         accepted: false,
         reason,
       }),
-    }).catch((err) => console.error("❌ Decline failed:", err));
+    }).catch((err) => console.error(" Decline failed:", err));
   };
 
   const handleStartTrip = () => {
@@ -144,7 +145,7 @@ export default function Dashboard() {
       body: JSON.stringify(tripData),
     })
       .then(() => fetchHistory())
-      .catch((err) => console.error("❌ Trip end failed:", err))
+      .catch((err) => console.error(" Trip end failed:", err))
       .finally(() => {
         setCurrentRide(null);
         setTripStarted(false);
@@ -156,20 +157,23 @@ export default function Dashboard() {
   if (!driverData) return <div className="text-white p-4">Loading...</div>;
 
   return (
-    <div className="text-white min-h-screen bg-black p-4">
+    <div className="text-black bg-black min-h-screen p-4">
       {!isOnline ? (
-        <div className="absolute inset-0 bg-black/70 z-30 flex flex-col items-center justify-center">
+        <div className="absolute inset-0 bg-white/70 z-30 flex flex-col items-center justify-center">
           <img src={driverData.avatar} alt="Avatar" className="w-24 h-24 rounded-full mb-4" />
-          <h2 className="text-xl font-bold">Hi, {driverData.name} 👋</h2>
-          <p className="text-sm text-gray-400">
+          <h2 className="text-xl font-bold">Hi, {driverData.name}</h2>
+          <p className="text-sm text-black">
             {driverData.car.model} - {driverData.car.plate}
           </p>
           <button
             onClick={toggleOnline}
-            className="mt-4 px-6 py-2 bg-green-600 hover:bg-green-700 rounded-full"
+            className="mt-4 px-6 py-2 bg-black text-white rounded-full"
           >
             Go Online
           </button>
+          <Link to="/" className="mt-4 px-6 py-2 bg-black text-white rounded-md">
+            Home
+          </Link>
         </div>
       ) : (
         <>

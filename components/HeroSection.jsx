@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Authentication from "./Authentication";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 export default function HeroSection() {
   const [showAuth, setShowAuth] = useState(false);
@@ -28,7 +28,7 @@ export default function HeroSection() {
     if (userType === "rider") {
       navigate("/rider/dashboard");
     } else if (userType === "driver") {
-      navigate("/driver/dashboard");
+      navigate("/Dashboard");
     }
   };
 
@@ -56,9 +56,9 @@ export default function HeroSection() {
 
         {!userType && (
           <>
-            <button onClick={() => setShowAuth(true)} className="bg-black text-white px-4 py-2 rounded-md">
+            <Link to="/Dashboard" onClick={() => setShowAuth(true)} className="bg-black text-white px-4 py-2 rounded-md">
               Get a Ride
-            </button>
+            </Link>
             <button onClick={() => setShowAuth(true)} className="bg-black text-white px-4 py-2 rounded-md">
               Drive with us
             </button>

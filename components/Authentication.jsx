@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../src/AuthContext";
 
 function Authentication({ onClose, onLogin }) {
   const [userType, setUserType] = useState("rider");
@@ -11,9 +10,14 @@ function Authentication({ onClose, onLogin }) {
     password: "",
     phone: "",
   });
-  const { login } = useAuth();
 
   const navigate = useNavigate();
+
+   const login = (user, token, userType) => {
+    localStorage.setItem("token", token);
+    localStorage.setItem("userType", userType);
+    localStorage.setItem("user", JSON.stringify(user));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -41,7 +45,7 @@ function Authentication({ onClose, onLogin }) {
         if (data.userType === "rider") {
           navigate("/");
         } else if (data.userType === "driver") {
-          navigate("/");
+          navigate("/DashBoardPage");
         } else {
           navigate("/");
         }

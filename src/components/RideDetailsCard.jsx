@@ -23,7 +23,7 @@ export default function RideDetailsCard({
 
   return (
     <div className="bg-white/5 p-4 rounded-lg border-2 border-green-500 border-white/10 space-y-3 mt-8 relative">
-      <h3 className="text-lg font-semibold">🚗 Ride Request</h3>
+      <h3 className="text-lg font-semibold">Ride Request</h3>
       <p><strong>From:</strong> {pickup}</p>
       <p><strong>To:</strong> {dropoff}</p>
       <p><strong>Time:</strong> {estimatedTime}</p>

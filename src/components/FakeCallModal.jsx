@@ -14,7 +14,7 @@ export default function FakeCallModal({ open, onClose, clientName }) {
           className="fixed inset-0 bg-black/80 flex items-center justify-center z-50"
         >
           <div className="bg-gray-900 text-white rounded-lg p-6 text-center max-w-xs w-full">
-            <h2 className="text-xl font-semibold mb-4">📞 Calling {clientName}...</h2>
+            <h2 className="text-xl font-semibold mb-4"> Calling {clientName}...</h2>
             <div className="animate-pulse text-4xl">📱</div>
             <p className="text-sm text-gray-400 mt-2">Connecting...</p>
             <button
