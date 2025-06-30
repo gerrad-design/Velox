@@ -7,6 +7,21 @@ import RidersPage from '../pages/RidersPage';
 
 function App() {
   const [userType, setUserType] = useState(null);
+
+function App() {
+  const [userType, setUserType] = useState(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const type = localStorage.getItem("userType");
+
+    if (token && type) {
+      setUserType(type); 
+    }
+  }, []);
+
+  
+}
   return (
     <>
       <Navbar  userType={userType} setUserType={setUserType} />
