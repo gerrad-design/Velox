@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import socket from "../socket";
 
@@ -49,7 +49,7 @@ const BookRide = ({ setRideData }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const handleConnect = () => console.log("✅ Socket connected:", socket.id);
+    const handleConnect = () => console.log(" Socket connected:", socket.id);
     const handleError = (err) => {
       console.error("❌ Socket error:", err);
       setError("Connection issue. Please refresh.");
@@ -132,23 +132,21 @@ const BookRide = ({ setRideData }) => {
   return (
     <ErrorBoundary>
       <div className="min-h-screen bg-white text-gray-900 p-6 relative">
-        <button
-          onClick={() => navigate(-1)}
-          className="absolute top-4 left-4 flex items-center gap-1 bg-gray-100 hover:bg-gray-200 px-3 py-1.5 text-sm rounded-lg transition-all"
-        >
-          <ArrowLeft size={18} className="text-gray-700" />
-          <span className="text-gray-700">Back</span>
-        </button>
-
         <div className="max-w-md mx-auto mt-16">
-          <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">🚖 Book a Ride</h1>
+          <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">Book a Ride</h1>
 
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-600 p-3 rounded-lg mb-6 text-sm">
               {error}
             </div>
           )}
-
+          <Link to='/'
+            onClick={() => navigate(-1)}
+            className="absolute top-24 flex items-center gap-1 bg-gray-100 hover:bg-gray-200 px-3 py-1.5 text-sm rounded-lg transition-all"
+          >
+            <ArrowLeft size={18} className="text-gray-700" />
+            <span className="text-gray-700">Back</span>
+          </Link>
           <form onSubmit={handleSubmit} className="bg-gray-50 rounded-xl shadow-sm p-6 space-y-4 border border-gray-200">
             <input
               type="text"

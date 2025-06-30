@@ -1,17 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useState } from "react";
-
-// From ft-rider
-import BookRide from "./components/BookRide";
 import RideStatus from "./components/RideStatus";
 import ClientDashboard from "./components/ClientDashboard";
-
-// From dev
-import Navbar from "./components/Navbar";
-import HomePage from "./pages/HomePage";
-import FeedbackPage from "./pages/FeedbackPage";
-import DashBoardPage from "./pages/DashBoardPage";
+import Navbar from "../components/Navbar";
+import HomePage from "../pages/HomePage";
+import FeedbackPage from "../pages/FeedbackPage";
+import DashBoard from "../src/components/Dashboard";
+import BookRidePage from "../pages/BookRidePage";
 
 export default function App() {
   const [userType, setUserType] = useState(null);
@@ -22,15 +18,12 @@ export default function App() {
       <Router>
         <Navbar userType={userType} setUserType={setUserType} />
         <Routes>
-          {/* Rider Flow */}
           <Route path="/" element={<HomePage userType={userType} setUserType={setUserType} />} />
-          <Route path="/book" element={<BookRide setRideData={setRideData} />} />
           <Route path="/status" element={<RideStatus rideData={rideData} />} />
           <Route path="/client-dashboard" element={<ClientDashboard />} />
-
-          {/* Driver/Admin Flow */}
           <Route path="/feedbackpage" element={<FeedbackPage />} />
-          <Route path="/dashboardpage" element={<DashBoardPage />} />
+          <Route path="/dashboard" element={<DashBoard />} />
+          <Route path="/bookridepage" element={<BookRidePage />} />
         </Routes>
       </Router>
     </div>
