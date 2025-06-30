@@ -26,9 +26,12 @@ export default function HeroSection() {
 
   const handleRedirect = () => {
     if (userType === "rider") {
-      navigate("/BookRidePage");
+    if (userType === "rider") {
+      navigate("/rider/dashboard");
     } else if (userType === "driver") {
-      navigate("/Dashboard");
+      navigate("/driver/dashboard");
+    }
+
     }
   };
 

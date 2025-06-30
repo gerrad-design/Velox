@@ -1,6 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { useState } from "react";
 import RideStatus from "./components/RideStatus";
 import ClientDashboard from "./components/ClientDashboard";
 import Navbar from "../components/Navbar";
@@ -29,4 +28,3 @@ export default function App() {
     </div>
   );
 }
-
