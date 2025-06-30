@@ -160,9 +160,6 @@ export default function Dashboard() {
         <div className="absolute inset-0 bg-white/70 z-30 flex flex-col items-center justify-center">
           <img src={driverData.avatar} alt="Avatar" className="w-24 h-24 rounded-full mb-4" />
           <h2 className="text-xl font-bold">Hi, {driverData.name}</h2>
-          <p className="text-sm text-black">
-            {driverData.car.model} - {driverData.car.plate}
-          </p>
           <button
             onClick={toggleOnline}
             className="mt-4 px-6 py-2 bg-black text-white rounded-full"
@@ -181,9 +178,6 @@ export default function Dashboard() {
               <img src={driverData.avatar} alt="Driver" className="w-14 h-14 rounded-full" />
               <div>
                 <h1 className="text-lg font-bold">{driverData.name}</h1>
-                <p className="text-sm text-gray-400">
-                  {driverData.car.model} - {driverData.car.plate}
-                </p>
               </div>
             </div>
             <button
