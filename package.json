@@ -11,10 +11,15 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.10",
-    "lucide-react": "^0.523.0",
+    "framer-motion": "^12.19.2",
+    "lucide-react": "^0.525.0",
     "react": "^19.1.0",
+    "react-countup": "^6.5.3",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.6.2",
+    "recharts": "^3.0.2",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
     "tailwindcss": "^4.1.10"
   },
   "devDependencies": {
