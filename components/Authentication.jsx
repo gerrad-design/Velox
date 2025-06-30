@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../src/AuthContext";
 
+
 function Authentication({ onClose, onLogin }) {
   const [userType, setUserType] = useState("rider");
   const [authMode, setAuthMode] = useState("signin");
@@ -12,7 +13,6 @@ function Authentication({ onClose, onLogin }) {
     phone: "",
   });
   const { login } = useAuth();
-
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -37,14 +37,10 @@ function Authentication({ onClose, onLogin }) {
         alert("Sign in successful");
 
         if (onLogin) onLogin(data.userType); 
-
-        if (data.userType === "rider") {
-          navigate("/");
-        } else if (data.userType === "driver") {
-          navigate("/");
-        } else {
+        if (data.userType !== "rider" && data.userType !== "driver") {
           navigate("/");
         }
+
 
       } else {
         alert(data.msg || "Authentication failed.");
