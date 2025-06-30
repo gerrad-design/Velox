@@ -50,8 +50,6 @@ export default function Dashboard() {
   useEffect(() => {
     setDriverData({
       name: "There",
-      avatar: "/driver.jpg",
-      car: { model: "Toyota Vitz", plate: "KDJ 123X" },
       stats: { avgRating: 4.8, hoursOnline: "4h 15m" },
     });
 

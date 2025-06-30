@@ -42,13 +42,10 @@ function Authentication({ onClose, onLogin }) {
 
         if (onLogin) onLogin(data.userType); 
 
-        if (data.userType === "rider") {
-          navigate("/");
-        } else if (data.userType === "driver") {
-          navigate("/DashBoardPage");
-        } else {
+        if (data.userType !== "rider" && data.userType !== "driver") {
           navigate("/");
         }
+
 
       } else {
         alert(data.msg || "Authentication failed.");
