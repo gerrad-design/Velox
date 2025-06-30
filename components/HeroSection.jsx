@@ -65,7 +65,13 @@ export default function HeroSection() {
         )}
 
         {showAuth && (
-          <Authentication onClose={() => setShowAuth(false)} onLogin={(role) => setUserType(role)} />
+          <Authentication
+            onClose={() => setShowAuth(false)}
+            onLogin={(role) => {
+              setUserType(role);
+              localStorage.setItem("userType", role); // ✅ optional enhancement
+            }}
+          />
         )}
       </div>
     </section>

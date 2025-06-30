@@ -7,30 +7,23 @@ import FeedbackForm from "./FeedbackForm";
 export default function Navbar({ userType, setUserType }) {
   const [showAuth, setShowAuth] = useState(false); 
   const [showFeedback, setShowFeedback] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    setIsAuthenticated(!!token);
-  }, []);
+    const role = localStorage.getItem("userType");
+    if (token && role) {
+      setUserType(role);
+    }
+  }, [setUserType]);
 
   const handleFeedbackClick = () => {
-  const token = localStorage.getItem("token");
-  if (!token) {
-    alert("You must be signed in to give feedback.");
-    return;
-  }
-  setShowFeedback(true);
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("You must be signed in to give feedback.");
+      return;
+    }
+    setShowFeedback(true);
   };
-
-
-  useEffect(() => {
-      const token = localStorage.getItem("token");
-      const role = localStorage.getItem("userType");
-      if (token && role) {
-        setUserType(role);
-      }
-    }, []);
 
   return (
     <>
@@ -42,18 +35,19 @@ export default function Navbar({ userType, setUserType }) {
           <Link to="/" className="text-md text-white font-semibold hover:underline">
             Home
           </Link>
-          <>
-            <button onClick={handleFeedbackClick} className="text-white hover:underline font-semibold bg-black px-4 py-2 rounded-md">
-              Give Feedback
-            </button>
-              {showFeedback && <FeedbackForm onClose={() => setShowFeedback(false)} />}
-          </>
+
+          <button
+            onClick={handleFeedbackClick}
+            className="text-white hover:underline font-semibold bg-black px-4 py-2 rounded-md"
+          >
+            Give Feedback
+          </button>
+
+          {showFeedback && <FeedbackForm onClose={() => setShowFeedback(false)} />}
         </nav>
       </header>
 
-      {showAuth && (
-        <Authentication onClose={() => setShowAuth(false)} />
-      )}
+      {showAuth && <Authentication onClose={() => setShowAuth(false)} />}
     </>
   );
 }
