@@ -10,7 +10,7 @@ import DeclineReasonForm from "./DeclineReasonForm";
 import EarningsChart from "./EarningsChart";
 
 
-const BASE_URL = "https://3c16-102-217-167-34.ngrok-free.app";
+const BASE_URL = "https://78c0-102-217-167-34.ngrok-free.app/";
 
 
 const socket = io(BASE_URL, {
