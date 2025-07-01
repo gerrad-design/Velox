@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../src/AuthContext";
 
-
 function Authentication({ onClose, onLogin }) {
   const [userType, setUserType] = useState("rider");
   const [authMode, setAuthMode] = useState("signin");
@@ -12,12 +11,12 @@ function Authentication({ onClose, onLogin }) {
     password: "",
     phone: "",
   });
-  const { login } = useAuth();
-  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const endpoint = authMode === "signin" ? "/login" : "/signup";
+    const { login } = useAuth();
+    const navigate = useNavigate();
 
     try {
       const res = await fetch(`http://localhost:5000${endpoint}`, {

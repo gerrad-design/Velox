@@ -6,7 +6,8 @@ import Navbar from "../components/Navbar";
 import HomePage from "../pages/HomePage";
 import FeedbackPage from "../pages/FeedbackPage";
 import DashBoard from "../src/components/Dashboard";
-import BookRidePage from "../pages/BookRidePage";
+import BookRide from "../src/components/BookRide";
+
 
 export default function App() {
   const [userType, setUserType] = useState(null);
@@ -14,17 +15,16 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      <Router>
-        <Navbar userType={userType} setUserType={setUserType} />
-        <Routes>
-          <Route path="/" element={<HomePage userType={userType} setUserType={setUserType} />} />
-          <Route path="/status" element={<RideStatus rideData={rideData} />} />
-          <Route path="/client-dashboard" element={<ClientDashboard />} />
-          <Route path="/feedbackpage" element={<FeedbackPage />} />
-          <Route path="/dashboard" element={<DashBoard />} />
-          <Route path="/bookridepage" element={<BookRidePage />} />
-        </Routes>
-      </Router>
+      <Navbar userType={userType} setUserType={setUserType} />
+      <Routes>
+        <Route path="/" element={<HomePage userType={userType} setUserType={setUserType} />} />
+        <Route path="/ridestatus" element={<RideStatus rideData={rideData} />} />
+        <Route path="/client-dashboard" element={<ClientDashboard />} />
+        <Route path="/feedbackpage" element={<FeedbackPage />} />
+        <Route path="/dashboard" element={<DashBoard />} />
+        <Route path="/bookride" element={<BookRide setRideData={setRideData} />} />
+      </Routes>
     </div>
   );
 }
+
