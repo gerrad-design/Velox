@@ -26,7 +26,7 @@ export default function HeroSection() {
 
   const handleRedirect = () => {
     if (userType === "rider") {
-      navigate("/BookRidePage");
+      navigate("/BookRide");
     } else if (userType === "driver") {
       navigate("/Dashboard");
     }

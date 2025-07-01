@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Clock, CheckCircle2, XCircle, Car, RotateCw } from 'lucide-react';
 import socket from '../socket';
 
 const RideStatus = ({ rideData }) => {
   const navigate = useNavigate();
+  const rideIdRef = useRef(null);
   const [status, setStatus] = useState({
-    state: 'pending', // 'pending' | 'accepted' | 'declined'
+    state: 'pending',
     driver: null,
     timer: 60,
-    error: null
+    error: null,
   });
 
   useEffect(() => {
@@ -18,54 +19,59 @@ const RideStatus = ({ rideData }) => {
       return;
     }
 
-    console.log('Tracking ride:', rideData.ride_id);
+    if (!rideIdRef.current) {
+      rideIdRef.current = rideData.ride_id;
+      console.log('🔐 Locked ride ID:', rideIdRef.current);
+    }
+
+    if (!socket.connected) {
+      console.log('🔌 Connecting socket...');
+      socket.connect();
+    }
 
     const handleAccepted = (data) => {
-      if (data.ride_id === rideData.ride_id) {
-        setStatus({
-          state: 'accepted',
-          driver: {
-            name: data.driver_name,
-            car: data.car_plate,
-            message: data.message || 'Your driver is coming!'
-          },
-          timer: 0,
-          error: null
-        });
-      }
+      console.log('✅ [ride_accepted] Received:', data);
+
+      // Force override for testing
+      setStatus({
+        state: 'accepted',
+        driver: {
+          name: data.driver_name,
+          car: data.car_plate,
+          message: data.message || 'Your driver is coming!',
+        },
+        timer: 0,
+        error: null,
+      });
     };
 
     const handleDeclined = (data) => {
-      if (data.ride_id === rideData.ride_id) {
-        setStatus({
-          state: 'declined',
-          driver: null,
-          timer: 0,
-          error: data.message || 'No drivers available'
-        });
-      }
+      console.log('❌ [ride_declined] Received:', data);
+
+      setStatus({
+        state: 'declined',
+        driver: null,
+        timer: 0,
+        error: data.message || 'No drivers available',
+      });
     };
 
     const handleTripEnded = (data) => {
-      if (data.ride_id === rideData.ride_id) {
-        setStatus({
-          state: 'declined',
-          driver: null,
-          timer: 0,
-          error: 'Trip ended by driver'
-        });
-      }
+      setStatus({
+        state: 'declined',
+        driver: null,
+        timer: 0,
+        error: 'Trip ended by driver',
+      });
     };
 
     const handleCancelledByDriver = (data) => {
-      if (data.ride_id === rideData.ride_id) {
-        setStatus({
-          state: 'declined',
-          driver: null,
-          timer: 0,
-          error: 'Driver cancelled the ride'
-        });
-      }
+      setStatus({
+        state: 'declined',
+        driver: null,
+        timer: 0,
+        error: 'Driver cancelled the ride',
+      });
     };
 
     socket.on('ride_accepted', handleAccepted);
@@ -73,8 +79,12 @@ const RideStatus = ({ rideData }) => {
     socket.on('trip_ended', handleTripEnded);
     socket.on('ride_cancelled_by_driver', handleCancelledByDriver);
 
+    socket.onAny((event, data) => {
+      console.log(`Socket Event: ${event}`, data);
+    });
+
     const timer = setInterval(() => {
-      setStatus(prev => {
+      setStatus((prev) => {
         if (prev.timer <= 1) {
           clearInterval(timer);
           if (prev.state === 'pending') {
@@ -87,21 +97,23 @@ const RideStatus = ({ rideData }) => {
     }, 1000);
 
     return () => {
+      console.log('🧹 Cleaning up RideStatus listeners...');
       socket.off('ride_accepted', handleAccepted);
       socket.off('ride_declined', handleDeclined);
       socket.off('trip_ended', handleTripEnded);
       socket.off('ride_cancelled_by_driver', handleCancelledByDriver);
+      socket.offAny();
       clearInterval(timer);
     };
   }, [rideData?.ride_id, navigate]);
 
-  const handleRetry = () => navigate('/book');
+  const handleRetry = () => navigate('/BookRide');
 
   const handleCancel = () => {
     if (rideData?.ride_id) {
       socket.emit('client_cancel_ride', { ride_id: rideData.ride_id });
     }
-    navigate('/');
+    navigate('/BookRide');
   };
 
   if (!rideData) {
@@ -113,19 +125,17 @@ const RideStatus = ({ rideData }) => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4">
+    <div className="min-h-screen bg-gray-200 p-4">
       <div className="max-w-md mx-auto">
-        {/* Header */}
         <div className="flex items-center justify-between mb-8">
-          <button onClick={handleCancel} className="flex items-center gap-1 text-blue-600">
-            <ArrowLeft size={18} />
-            <span>Back</span>
+          <button onClick={handleCancel} className="flex items-center py-2 px-4 rounded-md bg-gray-300 gap-1 text-blue-600">
+            <ArrowLeft className='text-black' size={18} />
+            <span className='text-black'>Back</span>
           </button>
-          <h1 className="text-xl font-bold">Ride Status</h1>
+          <h1 className="text-xl text-black font-bold">Ride Status</h1>
           <div className="w-6" />
         </div>
 
-        {/* Status */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-6 text-center">
           {status.state === 'pending' && (
             <>
@@ -133,10 +143,11 @@ const RideStatus = ({ rideData }) => {
               <h2 className="text-xl font-bold mb-2">Looking for a driver</h2>
               <p className="text-gray-600 mb-4">{status.timer} seconds remaining</p>
               <div className="w-full bg-gray-200 rounded-full h-2">
-                <div
-                  className="bg-blue-500 h-2 rounded-full"
-                  style={{ width: (status.timer / 60) * 100 + '%' }}
-                />
+               <div
+                className="bg-blue-500 h-2 rounded-full"
+                style={{ width: `${(status.timer / 60) * 100}%` }}
+              />
+
               </div>
             </>
           )}
@@ -144,7 +155,7 @@ const RideStatus = ({ rideData }) => {
           {status.state === 'accepted' && status.driver && (
             <>
               <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto mb-4" />
-              <h2 className="text-xl font-bold mb-2">Driver accepted!</h2>
+              <h2 className="text-xl text-black font-bold mb-2">Driver accepted!</h2>
               <p className="text-gray-600 mb-6">{status.driver.message}</p>
             </>
           )}
@@ -158,64 +169,60 @@ const RideStatus = ({ rideData }) => {
           )}
         </div>
 
-        {/* Ride Info */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h3 className="font-bold mb-4 text-lg">Trip Details</h3>
+          <h3 className="font-bold text-black mb-4 text-lg">Trip Details</h3>
           <div className="space-y-3">
             <div className="flex justify-between">
               <span className="text-gray-500">From:</span>
-              <span>{rideData.pickup}</span>
+              <span className='text-black'>{rideData.pickup}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-500">To:</span>
-              <span>{rideData.destination}</span>
+              <span className='text-black'>{rideData.destination}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-500">Type:</span>
-              <span>{rideData.selectedRide.type}</span>
+              <span className='text-black'>{rideData.selectedRide.type}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-500">Fare:</span>
-              <span>Ksh {rideData.selectedRide.price}</span>
+              <span className='text-black'>Ksh {rideData.selectedRide.price}</span>
             </div>
           </div>
         </div>
 
-        {/* Driver Info */}
         {status.state === 'accepted' && status.driver && (
           <div className="bg-white rounded-lg shadow-md p-6 mb-6">
             <h3 className="font-bold mb-4 text-lg flex items-center gap-2">
               <Car size={18} className="text-blue-500" />
-              <span>Driver Information</span>
+              <span className='text-black'>Driver Information</span>
             </h3>
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span className="text-gray-500">Name:</span>
-                <span>{status.driver.name}</span>
+                <span className='text-black'>{status.driver.name}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">Vehicle:</span>
-                <span>{status.driver.car}</span>
+                <span className='text-black'>{status.driver.car}</span>
               </div>
             </div>
           </div>
         )}
 
-        {/* Buttons */}
         <div className="flex flex-col gap-3">
           {status.state === 'declined' && (
             <button
               onClick={handleRetry}
-              className="bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-medium flex items-center justify-center gap-2"
+              className="bg-black  text-white py-3 rounded-lg font-medium flex items-center justify-center gap-2"
             >
               <RotateCw size={18} />
               Try Again
             </button>
           )}
-
           <button
             onClick={handleCancel}
-            className="border border-gray-300 hover:bg-gray-50 py-3 rounded-lg font-medium"
+            className="border bg-black py-3 rounded-lg font-medium"
           >
             {status.state === 'pending' ? 'Cancel Request' : 'Back Home'}
           </button>
