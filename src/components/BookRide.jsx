@@ -3,12 +3,47 @@ import { useNavigate, Link } from "react-router-dom";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import socket from "../socket";
 
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error("Error caught by boundary:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-600">
+          <h2 className="font-bold">Something went wrong</h2>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-2 px-3 py-1 bg-red-100 hover:bg-red-200 rounded"
+          >
+            Reload Page
+          </button>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
+
 const BookRide = ({ setRideData }) => {
   const [form, setForm] = useState({
     pickup: "",
     destination: "",
     rideType: "Economy",
     clientName: "",
+
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -24,23 +59,26 @@ const BookRide = ({ setRideData }) => {
     return () => {
       socket.off("connect");
       socket.off("connect_error");
+
     };
   }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleRideTypeChange = (type) => {
     setForm((prev) => ({ ...prev, rideType: type }));
+
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setError("");
 
-    if (!form.pickup || !form.destination) {
+    if (!form.pickup || !form.destination) 
       setError("Please fill in both pickup and destination.");
       return;
     }
@@ -51,6 +89,8 @@ const BookRide = ({ setRideData }) => {
       Economy: 300,
       Standard: 500,
       Premium: 700,
+
+
     };
 
     const ridePayload = {
@@ -59,6 +99,7 @@ const BookRide = ({ setRideData }) => {
       estimatedTime: "10 mins",
       fare: fareMap[form.rideType],
       clientName: form.clientName || "Anonymous",
+
       rideType: form.rideType,
     };
 
@@ -70,6 +111,7 @@ const BookRide = ({ setRideData }) => {
         selectedRide: {
           type: form.rideType,
           price: fareMap[form.rideType],
+
           eta: "10 mins",
         },
         ride_id: data.ride_id,
@@ -78,6 +120,13 @@ const BookRide = ({ setRideData }) => {
 
       setLoading(false);
       navigate("/RideStatus");
+          eta: "10 mins"
+        },
+        ride_id: data.ride_id,
+        status: "pending"
+      });
+      setLoading(false);
+      navigate("/status");
     };
 
     socket.once("ride_id_assigned", handleRideId);
@@ -94,6 +143,7 @@ const BookRide = ({ setRideData }) => {
   };
 
   return (
+
     <div className="min-h-screen bg-white text-gray-900 p-6 relative">
       <div className="max-w-md mx-auto mt-16">
         <h1 className="text-3xl font-bold text-center mb-8">Book a Ride</h1>

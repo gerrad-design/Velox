@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../src/AuthContext";
 
 function Authentication({ onClose, onLogin }) {
   const [userType, setUserType] = useState("rider");
@@ -11,17 +12,11 @@ function Authentication({ onClose, onLogin }) {
     phone: "",
   });
 
-  const navigate = useNavigate();
-
-   const login = (user, token, userType) => {
-    localStorage.setItem("token", token);
-    localStorage.setItem("userType", userType);
-    localStorage.setItem("user", JSON.stringify(user));
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const endpoint = authMode === "signin" ? "/login" : "/signup";
+    const { login } = useAuth();
+    const navigate = useNavigate();
 
     try {
       const res = await fetch(`http://localhost:5000${endpoint}`, {
@@ -41,7 +36,6 @@ function Authentication({ onClose, onLogin }) {
         alert("Sign in successful");
 
         if (onLogin) onLogin(data.userType); 
-
         if (data.userType !== "rider" && data.userType !== "driver") {
           navigate("/");
         }

@@ -19,6 +19,7 @@ const RideStatus = ({ rideData }) => {
       return;
     }
 
+
     if (!rideIdRef.current) {
       rideIdRef.current = rideData.ride_id;
       console.log('🔐 Locked ride ID:', rideIdRef.current);
@@ -72,6 +73,7 @@ const RideStatus = ({ rideData }) => {
         timer: 0,
         error: 'Driver cancelled the ride',
       });
+   
     };
 
     socket.on('ride_accepted', handleAccepted);
@@ -79,12 +81,12 @@ const RideStatus = ({ rideData }) => {
     socket.on('trip_ended', handleTripEnded);
     socket.on('ride_cancelled_by_driver', handleCancelledByDriver);
 
+
     socket.onAny((event, data) => {
       console.log(`Socket Event: ${event}`, data);
     });
 
     const timer = setInterval(() => {
-      setStatus((prev) => {
         if (prev.timer <= 1) {
           clearInterval(timer);
           if (prev.state === 'pending') {
@@ -98,14 +100,17 @@ const RideStatus = ({ rideData }) => {
 
     return () => {
       console.log('🧹 Cleaning up RideStatus listeners...');
+
       socket.off('ride_accepted', handleAccepted);
       socket.off('ride_declined', handleDeclined);
       socket.off('trip_ended', handleTripEnded);
       socket.off('ride_cancelled_by_driver', handleCancelledByDriver);
       socket.offAny();
+
       clearInterval(timer);
     };
   }, [rideData?.ride_id, navigate]);
+
 
   const handleRetry = () => navigate('/BookRide');
 
@@ -113,6 +118,7 @@ const RideStatus = ({ rideData }) => {
     if (rideData?.ride_id) {
       socket.emit('client_cancel_ride', { ride_id: rideData.ride_id });
     }
+
     navigate('/BookRide');
   };
 
@@ -136,6 +142,7 @@ const RideStatus = ({ rideData }) => {
           <div className="w-6" />
         </div>
 
+
         <div className="bg-white rounded-lg shadow-md p-6 mb-6 text-center">
           {status.state === 'pending' && (
             <>
@@ -143,11 +150,11 @@ const RideStatus = ({ rideData }) => {
               <h2 className="text-xl font-bold mb-2">Looking for a driver</h2>
               <p className="text-gray-600 mb-4">{status.timer} seconds remaining</p>
               <div className="w-full bg-gray-200 rounded-full h-2">
+
                <div
                 className="bg-blue-500 h-2 rounded-full"
                 style={{ width: `${(status.timer / 60) * 100}%` }}
               />
-
               </div>
             </>
           )}
@@ -155,7 +162,9 @@ const RideStatus = ({ rideData }) => {
           {status.state === 'accepted' && status.driver && (
             <>
               <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto mb-4" />
+
               <h2 className="text-xl text-black font-bold mb-2">Driver accepted!</h2>
+
               <p className="text-gray-600 mb-6">{status.driver.message}</p>
             </>
           )}
@@ -168,6 +177,7 @@ const RideStatus = ({ rideData }) => {
             </>
           )}
         </div>
+
 
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
           <h3 className="font-bold text-black mb-4 text-lg">Trip Details</h3>
@@ -191,10 +201,13 @@ const RideStatus = ({ rideData }) => {
           </div>
         </div>
 
+
+
         {status.state === 'accepted' && status.driver && (
           <div className="bg-white rounded-lg shadow-md p-6 mb-6">
             <h3 className="font-bold mb-4 text-lg flex items-center gap-2">
               <Car size={18} className="text-blue-500" />
+
               <span className='text-black'>Driver Information</span>
             </h3>
             <div className="space-y-2">
@@ -205,6 +218,7 @@ const RideStatus = ({ rideData }) => {
               <div className="flex justify-between">
                 <span className="text-gray-500">Vehicle:</span>
                 <span className='text-black'>{status.driver.car}</span>
+
               </div>
             </div>
           </div>
@@ -214,7 +228,9 @@ const RideStatus = ({ rideData }) => {
           {status.state === 'declined' && (
             <button
               onClick={handleRetry}
+
               className="bg-black  text-white py-3 rounded-lg font-medium flex items-center justify-center gap-2"
+
             >
               <RotateCw size={18} />
               Try Again

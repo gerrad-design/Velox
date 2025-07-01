@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from "react";
+
+import { Link } from "react-router-dom";
+
 import { io } from "socket.io-client";
 import StatCard from "./StatCard";
 import RideDetailsCard from "./RideDetailsCard";
@@ -10,6 +13,7 @@ import DeclineReasonForm from "./DeclineReasonForm";
 import EarningsChart from "./EarningsChart";
 
 
+
 const BASE_URL = "https://3c16-102-217-167-34.ngrok-free.app";
 
 
@@ -17,6 +21,7 @@ const socket = io(BASE_URL, {
   transports: ["websocket", "polling"],
   autoConnect: false,
 });
+
 
 export default function Dashboard() {
   const [isOnline, setIsOnline] = useState(false);
@@ -29,6 +34,7 @@ export default function Dashboard() {
   const [showMessage, setShowMessage] = useState(false);
   const [selectedTrip, setSelectedTrip] = useState(null);
   const [showDeclineForm, setShowDeclineForm] = useState(false);
+
   const [tripHistory, setTripHistory] = useState([]);
 
   const [driverData] = useState({
@@ -57,6 +63,7 @@ export default function Dashboard() {
     if (!isOnline) return;
 
     socket.connect();
+
 
     const handleNewRide = (data) => {
       console.log(" New ride received:", data);
@@ -104,6 +111,7 @@ export default function Dashboard() {
 
   const handleAccept = () => {
     if (!rideRequest) return;
+
     setCurrentRide(rideRequest);
     setRideRequest(null);
     setHasAccepted(true);
@@ -112,6 +120,7 @@ export default function Dashboard() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+
         ride_id: rideRequest.ride_id,
         accepted: true,
       }),
@@ -134,7 +143,7 @@ export default function Dashboard() {
     });
 
     setRideRequest(null);
-    setShowDeclineForm(false);
+    setShowDeclineForm(false)
   };
 
   const endTrip = () => {
@@ -195,6 +204,7 @@ export default function Dashboard() {
             </button>
           </div>
 
+
           <div className="grid grid-cols-2 gap-2 mb-4">
             <EarningsChart />
             <div className="grid grid-cols-1 gap-1">
@@ -215,6 +225,7 @@ export default function Dashboard() {
               isEnRoute={isEnRoute}
               tripStarted={tripStarted}
               onStartTrip={() => setTripStarted(true)}
+
               onEndTrip={endTrip}
               onToggleEnRoute={() => setIsEnRoute(!isEnRoute)}
               onCall={() => setShowCall(true)}
@@ -225,6 +236,7 @@ export default function Dashboard() {
             />
           )}
 
+
           <TripHistory trips={tripHistory} onTripClick={setSelectedTrip} />
 
           {showCall && (
@@ -234,7 +246,6 @@ export default function Dashboard() {
               clientName={currentRide?.clientName || "Client"}
             />
           )}
-
           {showMessage && (
             <FakeMessageModal
               open={showMessage}
@@ -242,6 +253,7 @@ export default function Dashboard() {
               clientName={currentRide?.clientName || "Client"}
             />
           )}
+
 
           {showDeclineForm && (
             <DeclineReasonForm onSubmit={submitDeclineReason} />
@@ -257,4 +269,6 @@ export default function Dashboard() {
       )}
     </div>
   );
+
 }
+

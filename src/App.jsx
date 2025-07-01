@@ -8,6 +8,7 @@ import FeedbackPage from "../pages/FeedbackPage";
 import DashBoard from "../src/components/Dashboard";
 import BookRide from "../src/components/BookRide";
 
+
 export default function App() {
   const [userType, setUserType] = useState(null);
   const [rideData, setRideData] = useState(null);
@@ -26,3 +27,4 @@ export default function App() {
     </div>
   );
 }
+
